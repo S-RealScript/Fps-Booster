@@ -1,0 +1,137 @@
+if not _G.Ignore then
+    _G.Ignore = {} 
+end
+if not _G.WaitPerAmount then
+    _G.WaitPerAmount = 500 
+end
+if _G.SendNotifications == nil then
+    _G.SendNotifications = false  -- تعطيل الإشعارات
+end
+if _G.ConsoleLogs == nil then
+    _G.ConsoleLogs = false 
+end
+
+if not game:IsLoaded() then
+    repeat
+        task.wait()
+    until game:IsLoaded()
+end
+if not _G.Settings then
+    _G.Settings = {
+        Players = {
+            ["Ignore Me"] = true,
+            ["Ignore Others"] = true,
+            ["Ignore Tools"] = true
+        },
+        Meshes = {
+            NoMesh = false,
+            NoTexture = false,
+            Destroy = false
+        },
+        Images = {
+            Invisible = true,
+            Destroy = false
+        },
+        Explosions = {
+            Smaller = true,
+            Invisible = false, 
+            Destroy = false 
+        },
+        Particles = {
+            Invisible = true,
+            Destroy = false
+        },
+        TextLabels = {
+            LowerQuality = false,
+            Invisible = false,
+            Destroy = false
+        },
+        MeshParts = {
+            LowerQuality = true,
+            Invisible = false,
+            NoTexture = false,
+            NoMesh = false,
+            Destroy = false
+        },
+        Other = {
+            ["FPS Cap"] = 240, 
+            ["No Camera Effects"] = true,
+            ["No Clothes"] = true,
+            ["Low Water Graphics"] = true,
+            ["No Shadows"] = true,
+            ["Low Rendering"] = true,
+            ["Low Quality Parts"] = true,
+            ["Low Quality Models"] = true,
+            ["Reset Materials"] = true,
+            ["Lower Quality MeshParts"] = true
+        }
+    }
+end
+
+local Players, Lighting, StarterGui, MaterialService = game:GetService("Players"), game:GetService("Lighting"), game:GetService("StarterGui"), game:GetService("MaterialService")
+local ME, CanBeEnabled = Players.LocalPlayer, {"ParticleEmitter", "Trail", "Smoke", "Fire", "Sparkles"}
+
+-- باقي السكربت بدون التغييرات هنا...
+
+-- إزالة إشعارات "SendNotification" عبر `SetCore`:
+-- تم تعطيل الإشعارات بشكل كامل في السكربت
+-- فقط قم بحذف أو تعليق الأسطر التي تحتوي على `StarterGui:SetCore("SendNotification", ...)`
+
+coroutine.wrap(pcall)(function()
+    if _G.Settings["Low Water Graphics"] or (_G.Settings.Other and _G.Settings.Other["Low Water Graphics"]) then
+        if not workspace:FindFirstChildOfClass("Terrain") then
+            repeat
+                task.wait()
+            until workspace:FindFirstChildOfClass("Terrain")
+        end
+        workspace:FindFirstChildOfClass("Terrain").WaterWaveSize = 0
+        workspace:FindFirstChildOfClass("Terrain").WaterWaveSpeed = 0
+        workspace:FindFirstChildOfClass("Terrain").WaterReflectance = 0
+        workspace:FindFirstChildOfClass("Terrain").WaterTransparency = 0
+        if sethiddenproperty then
+            sethiddenproperty(workspace:FindFirstChildOfClass("Terrain"), "Decoration", false)
+        end
+    end
+end)
+
+coroutine.wrap(pcall)(function()
+    if _G.Settings["No Shadows"] or (_G.Settings.Other and _G.Settings.Other["No Shadows"]) then
+        Lighting.GlobalShadows = false
+        Lighting.FogEnd = 9e9
+        Lighting.ShadowSoftness = 0
+        if sethiddenproperty then
+            sethiddenproperty(Lighting, "Technology", 2)
+        end
+    end
+end)
+
+coroutine.wrap(pcall)(function()
+    if _G.Settings["Low Rendering"] or (_G.Settings.Other and _G.Settings.Other["Low Rendering"]) then
+        settings().Rendering.QualityLevel = 1
+        settings().Rendering.MeshPartDetailLevel = Enum.MeshPartDetailLevel.Level04
+    end
+end)
+
+coroutine.wrap(pcall)(function()
+    if _G.Settings["Reset Materials"] or (_G.Settings.Other and _G.Settings.Other["Reset Materials"]) then
+        for i, v in pairs(MaterialService:GetChildren()) do
+            v:Destroy()
+        end
+        MaterialService.Use2022Materials = false
+    end
+end)
+
+coroutine.wrap(pcall)(function()
+    if _G.Settings["FPS Cap"] or (_G.Settings.Other and _G.Settings.Other["FPS Cap"]) then
+        if setfpscap then
+            if type(_G.Settings["FPS Cap"] or (_G.Settings.Other and _G.Settings.Other["FPS Cap"])) == "string" or type(_G.Settings["FPS Cap"] or (_G.Settings.Other and _G.Settings.Other["FPS Cap"])) == "number" then
+                setfpscap(tonumber(_G.Settings["FPS Cap"] or (_G.Settings.Other and _G.Settings.Other["FPS Cap"])))
+            elseif _G.Settings["FPS Cap"] or (_G.Settings.Other and _G.Settings.Other["FPS Cap"]) == true then
+                setfpscap(1e6)
+            end
+        end
+    end
+end)
+
+-- إيقاف إشعارات "SendNotification" تمامًا عند تحميل السكربت
+warn("FPS Booster Loaded!") -- هذا الخط يبقى للتحذير في الكونسول دون إشعارات
