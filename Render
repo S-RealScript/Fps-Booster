@@ -68,14 +68,52 @@ if not _G.Settings then
     }
 end
 
+-- منع ظهور رسالة "Terrain colors have been changed" في الكونسول
+local oldPrint = print
+hookfunction(print, function(msg, ...)
+    if not string.find(msg, "Terrain colors have been changed") then
+        oldPrint(msg, ...)
+    end
+end)
+
+local oldWarn = warn
+hookfunction(warn, function(msg, ...)
+    if not string.find(msg, "Terrain colors have been changed") then
+        oldWarn(msg, ...)
+    end
+end)
+
+local oldDebugLog = debug.log
+hookfunction(debug.log, function(msg, ...)
+    if not string.find(msg, "Terrain colors have been changed") then
+        oldDebugLog(msg, ...)
+    end
+end)
+
+-- منع ظهور رسالة "Terrain colors have been changed" في الكونسول
+local oldPrint = print
+hookfunction(print, function(msg, ...)
+    if not string.find(msg, "Terrain colors have been changed") then
+        oldPrint(msg, ...)
+    end
+end)
+
+local oldWarn = warn
+hookfunction(warn, function(msg, ...)
+    if not string.find(msg, "Terrain colors have been changed") then
+        oldWarn(msg, ...)
+    end
+end)
+
+local oldDebugLog = debug.log
+hookfunction(debug.log, function(msg, ...)
+    if not string.find(msg, "Terrain colors have been changed") then
+        oldDebugLog(msg, ...)
+    end
+end)
+
 local Players, Lighting, StarterGui, MaterialService = game:GetService("Players"), game:GetService("Lighting"), game:GetService("StarterGui"), game:GetService("MaterialService")
 local ME, CanBeEnabled = Players.LocalPlayer, {"ParticleEmitter", "Trail", "Smoke", "Fire", "Sparkles"}
-
--- باقي السكربت بدون التغييرات هنا...
-
--- إزالة إشعارات "SendNotification" عبر `SetCore`:
--- تم تعطيل الإشعارات بشكل كامل في السكربت
--- فقط قم بحذف أو تعليق الأسطر التي تحتوي على `StarterGui:SetCore("SendNotification", ...)`
 
 coroutine.wrap(pcall)(function()
     if _G.Settings["Low Water Graphics"] or (_G.Settings.Other and _G.Settings.Other["Low Water Graphics"]) then
@@ -132,6 +170,3 @@ coroutine.wrap(pcall)(function()
         end
     end
 end)
-
--- إيقاف إشعارات "SendNotification" تمامًا عند تحميل السكربت
-warn("FPS Booster Loaded!") -- هذا الخط يبقى للتحذير في الكونسول دون إشعارات
